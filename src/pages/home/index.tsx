@@ -1,8 +1,12 @@
+import MainContent from "@/components/main/MainContent";
+import { useMainView } from "@/contexts/MainViewContext";
+
 const Home = () => {
+  const { mode, selectedId } = useMainView();
+
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold">Trang chủ</h1>
-      <p>Chào mừng bạn đến với dự án React + TypeScript!</p>
+    <div className="p-4 overflow-hidden">
+      <MainContent mode={mode} selectedId={selectedId} />
     </div>
   );
 };

@@ -13,10 +13,22 @@ export const FadeIn = ({ children }: { children: ReactNode }) => (
   </motion.div>
 );
 
-// Fade + Slide Up
-export const FadeSlideY = ({ children }: { children: ReactNode }) => (
+// SlideUp
+export const SlideUp = ({ children }: { children: ReactNode }) => (
   <motion.div
     initial={{ opacity: 0, y: 40 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -40 }}
+    transition={{ duration: 0.3 }}
+  >
+    {children}
+  </motion.div>
+);
+
+// SlideDown
+export const SlideDown = ({ children }: { children: ReactNode }) => (
+  <motion.div
+    initial={{ opacity: 0, y: -40 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -40 }}
     transition={{ duration: 0.3 }}

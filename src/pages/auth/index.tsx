@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { authApi } from "@/api/index";
 import { saveToken } from "@/utils/auth";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
-import { FadeSlideY } from "@/components/animation";
+import { PopSpring } from "@/components/animation";
 import Logo from "@/assets/images/logo.png";
 import PaperPlane from "@/components/loading/PaperPlane";
 import { Form, Input, Button, Typography, Card } from "antd";
@@ -47,8 +47,8 @@ const AuthPage = () => {
       {loading ? (
         <PaperPlane fullScreen />
       ) : (
-        <FadeSlideY>
-          <div className="min-h-screen py-6 flex flex-col justify-center sm:py-12">
+        <PopSpring>
+          <div className="py-6 flex flex-col justify-center sm:py-12">
             <div className="relative py-3 sm:max-w-xl sm:mx-auto">
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-sky-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
               <div className="relative bg-white shadow-lg rounded-2xl p-6 sm:rounded-3xl sm:p-20">
@@ -123,7 +123,7 @@ const AuthPage = () => {
               </div>
             </div>
           </div>
-        </FadeSlideY>
+        </PopSpring>
       )}
     </>
   );

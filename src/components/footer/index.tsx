@@ -1,4 +1,13 @@
+import { SlideUp } from "../animation";
+
 const Footer = () => (
-  <footer className="bg-gray-100 px-4 py-2 border-t text-center">© 2025</footer>
+  <footer className="bg-gray-100 px-4 py-2 border-t text-center overflow-hidden">
+    <SlideUp>
+      <div className="flex justify-between items-center">
+        <span>@2025</span>
+        <span>MinhPhong ngu</span>
+      </div>
+    </SlideUp>
+  </footer>
 );
 export default Footer;

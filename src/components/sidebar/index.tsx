@@ -1,16 +1,26 @@
+import { useRef } from "react";
+import { useMainView } from "@/contexts/MainViewContext";
 import { useSidebar } from "@/contexts/SidebarContext";
-import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  FolderOpenOutlined,
+  MenuOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import Logo from "@/assets/images/logo.png";
-import { Typography } from "antd";
+import { Tooltip, Typography } from "antd";
 import { useBreakpointMatch } from "@/hooks/useBreakpointMatch";
-import { useState } from "react";
-import PopUpSearch from "./PopUpSearch";
+import PopUpSearch, { PopUpSearchRef } from "./PopUpSearch";
+import { SlideDown } from "../animation";
+import Chatbot from "@/assets/images/chatbot.jpg";
+import SidebarFolderSelector from "./SidebarFolderSelector";
+import { mockFolders } from "@/mocks/mockFolders";
 
 const Sidebar = () => {
-  const { isOpen, toggle } = useSidebar();
-  const isLargeScreen = useBreakpointMatch("sm");
+  const popupSearchRef = useRef<PopUpSearchRef>(null);
+  const isLargeScreen = useBreakpointMatch("md");
+  const { setMainView } = useMainView();
 
-  const [visibleSearch, setVisibleSearch] = useState(false);
+  const { isOpen, toggle } = useSidebar();
 
   const asideClass = isLargeScreen
     ? isOpen
@@ -21,7 +31,7 @@ const Sidebar = () => {
       }`;
 
   return (
-    <>
+    <SlideDown>
       {!isLargeScreen && (
         <div
           onClick={toggle}
@@ -33,7 +43,7 @@ const Sidebar = () => {
 
       <aside
         className={`
-          z-50 min-h-full w-64 bg-gray-50 border-r p-4 flex flex-col gap-4 transition-all duration-300
+          z-50 min-h-full w-64 bg-gray-50 border-r px-4 py-3 flex flex-col gap-4 transition-all duration-300
           ${asideClass}
         `}
       >
@@ -48,7 +58,10 @@ const Sidebar = () => {
             </Typography.Title>
           </div>
           <div className="flex items-center gap-2">
-            <div className="icon-hover" onClick={() => setVisibleSearch(true)}>
+            <div
+              className="icon-hover"
+              onClick={() => popupSearchRef.current?.open()}
+            >
               <SearchOutlined style={{ fontSize: 18 }} />
             </div>
             <div className="icon-hover" onClick={toggle}>
@@ -56,11 +69,37 @@ const Sidebar = () => {
             </div>
           </div>
         </div>
-        <div className="mt-8">Sidebar Menu</div>
+
+        <Tooltip placement="right" title="Đoạn chat mới">
+          <div className="button-hover" onClick={() => setMainView("home")}>
+            <div className="text-clip-nowrap">
+              <img
+                src={Chatbot}
+                alt="chatbot"
+                className="w-6 h-6 rounded-full border-2 border-main-red"
+              />
+              ChatGPT pha ke
+            </div>
+          </div>
+        </Tooltip>
+
+        <div className="p-2 flex flex-col gap-2">
+          {/* Folder */}
+          <SidebarFolderSelector
+            title="Thư mục"
+            icon={<FolderOpenOutlined />}
+            folders={mockFolders}
+          />
+
+          <div className="folder-sidebar-title">Hôm nay</div>
+          <div className="folder-sidebar-title">Hôm qua</div>
+          <div className="folder-sidebar-title">1 tuần trước</div>
+          <div className="folder-sidebar-title">1 tháng trước</div>
+        </div>
       </aside>
 
-      <PopUpSearch />
-    </>
+      <PopUpSearch ref={popupSearchRef} />
+    </SlideDown>
   );
 };
 
