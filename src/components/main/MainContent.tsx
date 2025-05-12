@@ -1,5 +1,6 @@
 import { chatList, mockFolders } from "@/mocks/mockChat";
 import { Typography } from "antd";
+import ChatInputBox from "../chat/ChatInputBox";
 
 const { Title, Paragraph } = Typography;
 
@@ -12,7 +13,12 @@ interface MainContentProps {
 
 const MainContent = ({ mode, selectedId }: MainContentProps) => {
   if (mode === "home") {
-    return <div className="text-center text-xl">Ready when you are.</div>;
+    return (
+      <div className="flex flex-col justify-center items-center gap-4 h-full w-full">
+        <div className="text-xl">Ready when you are.</div>
+        <ChatInputBox />
+      </div>
+    );
   }
 
   if (mode === "folder") {

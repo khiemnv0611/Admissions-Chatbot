@@ -4,11 +4,7 @@ import { useMainView } from "@/contexts/MainViewContext";
 const Home = () => {
   const { mode, selectedId } = useMainView();
 
-  return (
-    <div className="p-4 overflow-hidden">
-      <MainContent mode={mode} selectedId={selectedId} />
-    </div>
-  );
+  return <MainContent mode={mode} selectedId={selectedId} />;
 };
 
 export default Home;

@@ -44,7 +44,13 @@ const FolderItem = ({ data, isOpen, onToggle, icon }: FolderItemProps) => {
           onClick={() => setMainView("folder", data.id)}
         >
           <div className="text-clip-nowrap">
-            <div className="icon-hover" onClick={onToggle}>
+            <div
+              className="icon-hover"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle();
+              }}
+            >
               <Tooltip placement="top" title="Danh sách chat">
                 {renderIcon}
               </Tooltip>
