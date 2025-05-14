@@ -7,11 +7,15 @@ const Header = () => {
   const { isOpen, toggle } = useSidebar();
 
   return (
-    <header className="bg-white px-8 py-4 shadow overflow-hidden">
+    <header className="bg-white p-3 shadow overflow-hidden">
       <SlideLeft>
         <div className="h-7 flex items-center gap-8">
-          {!isOpen && (
-            <MenuOutlined onClick={toggle} style={{ fontSize: 18 }} />
+          {!isOpen ? (
+            <div className="icon-hover" onClick={toggle}>
+              <MenuOutlined style={{ fontSize: 18 }} />
+            </div>
+          ) : (
+            <div></div>
           )}
           <BreadcrumbsTrail />
         </div>

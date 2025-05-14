@@ -1,10 +1,7 @@
-import MainContent from "@/components/main/MainContent";
-import { useMainView } from "@/contexts/MainViewContext";
+import HomeView from "@/views/main/HomeView";
 
-const Home = () => {
-  const { mode, selectedId } = useMainView();
-
-  return <MainContent mode={mode} selectedId={selectedId} />;
+const HomePage = () => {
+  return <HomeView />;
 };
 
-export default Home;
+export default HomePage;

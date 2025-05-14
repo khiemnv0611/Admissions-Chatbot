@@ -1,23 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import SidebarSection from "./SidebarSection";
+import FolderSection from "./FolderSection";
 import FolderList from "./FolderList";
 import { FolderData } from "./FolderItem";
 import { Popover, Tooltip } from "antd";
 import { TfiMore } from "react-icons/tfi";
 
-interface SidebarFolderSelectorProps {
+interface FolderSelectorProps {
   title?: string;
   folders: FolderData[];
   icon?: React.ReactNode;
   maxVisible?: number;
 }
 
-const SidebarFolderSelector = ({
+const FolderSelector = ({
   title = "Thư mục",
   folders,
   icon,
   maxVisible = 5,
-}: SidebarFolderSelectorProps) => {
+}: FolderSelectorProps) => {
   const [openFolderIds, setOpenFolderIds] = useState<string[]>([]);
   const [visibleFolders, setVisibleFolders] = useState<FolderData[]>(
     folders.slice(0, maxVisible)
@@ -68,7 +68,7 @@ const SidebarFolderSelector = ({
   );
 
   return (
-    <SidebarSection title={title}>
+    <FolderSection title={title}>
       <FolderList
         folders={visibleFolders}
         openFolderIds={openFolderIds}
@@ -92,8 +92,8 @@ const SidebarFolderSelector = ({
           </Popover>
         </div>
       )}
-    </SidebarSection>
+    </FolderSection>
   );
 };
 
-export default SidebarFolderSelector;
+export default FolderSelector;

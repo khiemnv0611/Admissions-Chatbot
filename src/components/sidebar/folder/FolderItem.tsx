@@ -3,13 +3,18 @@ import { FolderOpenOutlined } from "@ant-design/icons";
 import { Tooltip, Popover } from "antd";
 import { TfiMoreAlt } from "react-icons/tfi";
 import { TbTrash } from "react-icons/tb";
-import ProjectItem from "./ProjectItem";
-import { useMainView } from "@/contexts/MainViewContext";
+import ProjectItem from "../ProjectItem";
+import { useNavigate } from "react-router-dom";
+
+export interface ProjectData {
+  id: string;
+  name: string;
+}
 
 export interface FolderData {
   id: string;
   name: string;
-  projects: string[];
+  projects: ProjectData[];
 }
 
 interface FolderItemProps {
@@ -20,9 +25,9 @@ interface FolderItemProps {
 }
 
 const FolderItem = ({ data, isOpen, onToggle, icon }: FolderItemProps) => {
+  const navigate = useNavigate();
   const { name, projects } = data;
   const renderIcon = icon ?? <FolderOpenOutlined />;
-  const { setMainView } = useMainView();
 
   const [showPopoverFolder, setShowPopoverFolder] = useState(false);
 
@@ -41,7 +46,7 @@ const FolderItem = ({ data, isOpen, onToggle, icon }: FolderItemProps) => {
       <div className="flex items-center">
         <div
           className="group button-hover !p-1"
-          onClick={() => setMainView("folder", data.id)}
+          onClick={() => navigate(`/folder/${data.id}`)}
         >
           <div className="text-clip-nowrap">
             <div
@@ -61,7 +66,10 @@ const FolderItem = ({ data, isOpen, onToggle, icon }: FolderItemProps) => {
           </div>
           <div
             className="cursor-pointer hidden group-hover:block"
-            onClick={() => setShowPopoverFolder((prev) => !prev)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowPopoverFolder((prev) => !prev);
+            }}
           >
             <TfiMoreAlt />
           </div>
@@ -83,7 +91,7 @@ const FolderItem = ({ data, isOpen, onToggle, icon }: FolderItemProps) => {
       {isOpen && projects.length > 0 && (
         <div className="ml-6 flex flex-col gap-2">
           {projects.map((project) => (
-            <ProjectItem key={project} project={project} />
+            <ProjectItem key={project.id} project={project} />
           ))}
         </div>
       )}

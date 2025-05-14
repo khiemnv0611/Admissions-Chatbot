@@ -3,12 +3,15 @@ import { memo, useState } from "react";
 import { EditOutlined } from "@ant-design/icons";
 import { TbTrash } from "react-icons/tb";
 import { TfiMoreAlt } from "react-icons/tfi";
+import { ProjectData } from "./folder/FolderItem";
+import { useNavigate } from "react-router-dom";
 
 type ProjectItemProps = {
-  project: string;
+  project: ProjectData;
 };
 
 const ProjectItem = ({ project }: ProjectItemProps) => {
+  const navigate = useNavigate();
   const [showPopoverProject, setShowPopoverProject] = useState(false);
 
   const content = (
@@ -26,15 +29,22 @@ const ProjectItem = ({ project }: ProjectItemProps) => {
 
   return (
     <div className="flex items-center">
-      <div className="group button-hover" key={project}>
+      <div
+        className="group button-hover"
+        key={project.id}
+        onClick={() => navigate(`/chat/${project.id}`)}
+      >
         <div className="text-clip-nowrap">
-          <Tooltip placement="right" title={project}>
-            {project}
+          <Tooltip placement="right" title={project.name}>
+            {project.name}
           </Tooltip>
         </div>
         <div
           className="cursor-pointer hidden group-hover:block"
-          onClick={() => setShowPopoverProject((prev) => !prev)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowPopoverProject((prev) => !prev);
+          }}
         >
           <TfiMoreAlt />
         </div>

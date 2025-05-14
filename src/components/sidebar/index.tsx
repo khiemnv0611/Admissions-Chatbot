@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { useMainView } from "@/contexts/MainViewContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import {
   FolderOpenOutlined,
@@ -12,13 +11,16 @@ import { useBreakpointMatch } from "@/hooks/useBreakpointMatch";
 import PopUpSearch, { PopUpSearchRef } from "./PopUpSearch";
 import { SlideDown } from "../animation";
 import Chatbot from "@/assets/images/chatbot.jpg";
-import SidebarFolderSelector from "./SidebarFolderSelector";
-import { mockFolders } from "@/mocks/mockFolders";
+import SidebarFolderSelector from "./folder/FolderSelector";
+import { mockMenu } from "@/mocks";
+import { useNavigate } from "react-router-dom";
+
+const { Title } = Typography;
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   const popupSearchRef = useRef<PopUpSearchRef>(null);
   const isLargeScreen = useBreakpointMatch("md");
-  const { setMainView } = useMainView();
 
   const { isOpen, toggle } = useSidebar();
 
@@ -48,14 +50,14 @@ const Sidebar = () => {
         `}
       >
         <div className="h-7 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => navigate("/home")}
+          >
             <img src={Logo} alt="logo" className="w-8" />
-            <Typography.Title
-              level={5}
-              className="uppercase !text-main-red !mb-0"
-            >
+            <Title level={5} className="uppercase !text-main-red !mb-0">
               Tuyển sinh
-            </Typography.Title>
+            </Title>
           </div>
           <div className="flex items-center gap-2">
             <div
@@ -71,7 +73,7 @@ const Sidebar = () => {
         </div>
 
         <Tooltip placement="right" title="Đoạn chat mới">
-          <div className="button-hover" onClick={() => setMainView("home")}>
+          <div className="button-hover" onClick={() => navigate("/home")}>
             <div className="text-clip-nowrap">
               <img
                 src={Chatbot}
@@ -88,7 +90,7 @@ const Sidebar = () => {
           <SidebarFolderSelector
             title="Thư mục"
             icon={<FolderOpenOutlined />}
-            folders={mockFolders}
+            folders={mockMenu}
           />
 
           <div className="folder-sidebar-title">Hôm nay</div>

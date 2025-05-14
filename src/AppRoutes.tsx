@@ -4,12 +4,9 @@ import AuthPage from "./pages/auth";
 import HomePage from "./pages/home";
 import AuthLayout from "./layouts/AuthLayout";
 import MainLayout from "./layouts/MainLayout";
+import FolderView from "./views/main/FolderView";
+import ChatView from "./views/main/ChatView";
 import { isAuthenticated } from "./utils/auth";
-import { ReactElement } from "react";
-
-const PrivateRoute = ({ element }: { element: ReactElement }) => {
-  return isAuthenticated() ? element : <Navigate to="/auth" replace />;
-};
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -17,7 +14,14 @@ const AppRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* Redirect root or fallback */}
+        <Route
+          path="/auth"
+          element={
+            <AuthLayout>
+              <AuthPage />
+            </AuthLayout>
+          }
+        />
         <Route
           path="/"
           element={
@@ -31,32 +35,13 @@ const AppRoutes = () => {
           }
         />
 
-        {/* Auth */}
-        <Route
-          path="/auth"
-          element={
-            <AuthLayout>
-              <AuthPage />
-            </AuthLayout>
-          }
-        />
-
-        {/* Home */}
-        <Route
-          path="/home"
-          element={
-            // <PrivateRoute
-            //   element={
-            //     <MainLayout>
-            //       <HomePage />
-            //     </MainLayout>
-            //   }
-            // />
-            <MainLayout>
-              <HomePage />
-            </MainLayout>
-          }
-        />
+        {/* Main Layout wrapper, only re-renders outlet */}
+        <Route element={<MainLayout />}>
+          {/* Nested routes to keep the layout intact */}
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/folder/:folderId" element={<FolderView />} />
+          <Route path="/chat/:chatId" element={<ChatView />} />
+        </Route>
       </Routes>
     </AnimatePresence>
   );

@@ -40,7 +40,7 @@ const ChatInputBox = () => {
   }, [input]);
 
   return (
-    <div className="p-3 rounded-xl flex flex-col gap-2 border border-gray-600 w-[70%] h-fit">
+    <div className="p-3 rounded-xl flex flex-col gap-2 border border-gray-600 w-full h-fit">
       <textarea
         ref={textareaRef}
         value={input}

@@ -1,7 +1,7 @@
 import { SlideUp } from "../animation";
 
 const Footer = () => (
-  <footer className="bg-gray-100 px-4 py-2 border-t text-center overflow-hidden">
+  <footer className="bg-gray-100 px-4 py-1 border-t text-center overflow-hidden">
     <SlideUp>
       <div className="flex justify-between items-center">
         <span>@2025</span>

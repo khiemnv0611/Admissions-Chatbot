@@ -6,7 +6,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const SidebarSection = ({ title, children }: Props) => {
+const FolderSection = ({ title, children }: Props) => {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex justify-between items-center group h-6">
@@ -26,4 +26,4 @@ const SidebarSection = ({ title, children }: Props) => {
   );
 };
 
-export default SidebarSection;
+export default FolderSection;

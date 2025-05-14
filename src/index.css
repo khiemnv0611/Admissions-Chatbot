@@ -61,7 +61,7 @@ a:hover {
 
 /* Custom Class */
 .page {
-  @apply min-h-screen min-w-full overflow-hidden;
+  @apply min-h-screen min-w-full overflow-hidden bg-white text-black;
 }
 
 .folder-sidebar-title {

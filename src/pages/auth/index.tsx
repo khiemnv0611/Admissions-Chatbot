@@ -6,9 +6,11 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { PopSpring } from "@/components/animation";
 import Logo from "@/assets/images/logo.png";
 import PaperPlane from "@/components/loading/PaperPlane";
-import { Form, Input, Button, Typography, Card } from "antd";
+import { Form, Input, Button, Typography } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import toast from "react-hot-toast";
+
+const { Title } = Typography;
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -54,19 +56,16 @@ const AuthPage = () => {
               <div className="relative bg-white shadow-lg rounded-2xl p-6 sm:rounded-3xl sm:p-20">
                 <div className="flex justify-center items-center gap-3 mb-6">
                   <img src={Logo} alt="Logo" className="w-16 sm:w-20" />
-                  <Typography.Title
+                  <Title
                     level={3}
                     className="!text-main-red uppercase text-xl sm:text-3xl"
                   >
                     Tuyển sinh
-                  </Typography.Title>
+                  </Title>
                 </div>
-                <Typography.Title
-                  level={3}
-                  className="text-center text-lg sm:text-2xl"
-                >
+                <Title level={3} className="text-center text-lg sm:text-2xl">
                   Đăng nhập
-                </Typography.Title>
+                </Title>
                 <Form
                   form={form}
                   name="login"
@@ -76,9 +75,9 @@ const AuthPage = () => {
                     toast.error("Vui lòng điền đầy đủ thông tin")
                   }
                 >
-                  <Typography.Title level={5} className="text-base sm:text-lg">
+                  <Title level={5} className="text-base sm:text-lg">
                     Email <span className="text-red-500">*</span>
-                  </Typography.Title>
+                  </Title>
                   <Form.Item
                     name="email"
                     rules={[
@@ -94,9 +93,9 @@ const AuthPage = () => {
                     />
                   </Form.Item>
 
-                  <Typography.Title level={5} className="text-base sm:text-lg">
+                  <Title level={5} className="text-base sm:text-lg">
                     Mật khẩu <span className="text-red-500">*</span>
-                  </Typography.Title>
+                  </Title>
                   <Form.Item
                     name="password"
                     rules={[
