@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { authApi } from "@/api/index";
-import { saveToken } from "@/utils/auth";
-import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { authApi } from "@/api/auth.api";
 import { PopSpring } from "@/components/animation";
 import Logo from "@/assets/images/logo.png";
 import PaperPlane from "@/components/loading/PaperPlane";
@@ -12,33 +10,24 @@ import toast from "react-hot-toast";
 
 const { Title } = Typography;
 
-const AuthPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
-  useAuthRedirect();
-
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleSubmit = async (values: { email: string; password: string }) => {
-    const { email, password } = values;
+  const handleSubmit = async (values: { username: string; email: string; password: string }) => {
+    const { username, email, password } = values;
     setLoading(true);
     try {
-      // const res = await authApi.login(email, password);
-      // saveToken(res.token);
-      toast.success("Đăng nhập thành công!");
-      navigate("/home");
+      const res = await authApi.register(username, email, password);
+      if (res.Code === 1) {
+        toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
+        navigate("/auth");
+      } else {
+        toast.error(res.Message || "Đăng ký thất bại.");
+      }
     } catch (err) {
-      toast.error("Đăng nhập thất bại");
+      toast.error("Lỗi kết nối hoặc server.");
     } finally {
       setLoading(false);
     }
@@ -64,17 +53,26 @@ const AuthPage = () => {
                   </Title>
                 </div>
                 <Title level={3} className="text-center text-lg sm:text-2xl">
-                  Đăng nhập
+                  Đăng ký
                 </Title>
                 <Form
                   form={form}
-                  name="login"
+                  name="register"
                   layout="vertical"
                   onFinish={handleSubmit}
-                  onFinishFailed={() =>
-                    toast.error("Vui lòng điền đầy đủ thông tin")
-                  }
+                  onFinishFailed={() => toast.error("Vui lòng điền đầy đủ thông tin")}
                 >
+                  <Title level={5} className="text-base sm:text-lg">
+                    Tên đăng nhập <span className="text-red-500">*</span>
+                  </Title>
+                  <Form.Item
+                    name="username"
+                    rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập!" }]}
+                    className="mb-4 sm:mb-6"
+                  >
+                    <Input placeholder="Tên đăng nhập" size="large" />
+                  </Form.Item>
+
                   <Title level={5} className="text-base sm:text-lg">
                     Email <span className="text-red-500">*</span>
                   </Title>
@@ -98,9 +96,7 @@ const AuthPage = () => {
                   </Title>
                   <Form.Item
                     name="password"
-                    rules={[
-                      { required: true, message: "Vui lòng nhập mật khẩu!" },
-                    ]}
+                    rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
                     className="mb-6"
                   >
                     <Input.Password
@@ -115,10 +111,16 @@ const AuthPage = () => {
                       htmlType="submit"
                       className="w-full sm:w-auto !bg-main-blue hover:!bg-main-red !text-white border-none rounded-lg px-6 sm:px-10 py-3 sm:py-5 font-bold text-sm sm:text-base"
                     >
-                      Đăng nhập
+                      Đăng ký
                     </Button>
                   </Form.Item>
                 </Form>
+                <div className="text-center">
+                  Bạn đã có tài khoản?{" "}
+                  <Link to="/auth" className="text-main-blue underline">
+                    Đăng nhập ngay
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -128,4 +130,4 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage;
+export default RegisterPage;

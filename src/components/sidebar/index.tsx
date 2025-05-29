@@ -14,6 +14,7 @@ import Chatbot from "@/assets/images/chatbot.jpg";
 import SidebarFolderSelector from "./folder/FolderSelector";
 import { mockMenu } from "@/mocks";
 import { useNavigate } from "react-router-dom";
+import ChatSelector from "./chat/ChatSelector";
 
 const { Title } = Typography;
 
@@ -86,6 +87,12 @@ const Sidebar = () => {
         </Tooltip>
 
         <div className="p-2 flex flex-col gap-2">
+          {/* Chat */}
+          <ChatSelector />
+
+          {/* Thêm một component hr để chắn ngang giữa chat và folder */}
+          <div className="my-2 border-t border-gray-300"></div>
+
           {/* Folder */}
           <SidebarFolderSelector
             title="Thư mục"
@@ -93,10 +100,10 @@ const Sidebar = () => {
             folders={mockMenu}
           />
 
-          <div className="folder-sidebar-title">Hôm nay</div>
+          {/* <div className="folder-sidebar-title">Hôm nay</div>
           <div className="folder-sidebar-title">Hôm qua</div>
           <div className="folder-sidebar-title">1 tuần trước</div>
-          <div className="folder-sidebar-title">1 tháng trước</div>
+          <div className="folder-sidebar-title">1 tháng trước</div> */}
         </div>
       </aside>
 

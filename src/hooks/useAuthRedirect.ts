@@ -8,5 +8,5 @@ export const useAuthRedirect = () => {
     if (isAuthenticated()) {
       navigate("/home");
     }
-  }, []);
+  }, [navigate]);
 };

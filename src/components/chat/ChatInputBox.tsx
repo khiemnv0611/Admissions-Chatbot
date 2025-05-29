@@ -1,8 +1,13 @@
-import { useRef, useState, ChangeEvent, useEffect, KeyboardEvent } from "react";
+import { useState, useRef, ChangeEvent, KeyboardEvent, useEffect } from "react";
 import { TbLocationFilled } from "react-icons/tb";
 import { FaMicrophone, FaPlus } from "react-icons/fa6";
 
-const ChatInputBox = () => {
+interface ChatInputBoxProps {
+  chatId?: string; // có thể truyền hoặc không
+  onSend: (question: string, chatId?: string) => Promise<void>;
+}
+
+const ChatInputBox = ({ onSend }: ChatInputBoxProps) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [input, setInput] = useState<string>("");
 
@@ -22,8 +27,8 @@ const ChatInputBox = () => {
 
   const handleSend = () => {
     if (input.trim()) {
-      console.log("Gửi nội dung:", input);
-      setInput("");
+      onSend(input); // Gọi onSend khi nhấn gửi
+      setInput(""); // Xóa input sau khi gửi
     }
   };
 
