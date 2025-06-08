@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import ChatInputBox from "@/components/chat/ChatInputBox";
 import axiosClient from "@/api/axiosClient";
 import { io, Socket } from "socket.io-client";
+import "./chat.css";
 
 const TYPEWRITER_INTERVAL = 20;
 
@@ -21,7 +22,10 @@ interface ChatViewProps {
   onNewChatCreated?: (chatId: string) => void; // callback khi chat mới tạo
 }
 
-const ChatView: React.FC<ChatViewProps> = ({ initialChatId, onNewChatCreated }) => {
+const ChatView: React.FC<ChatViewProps> = ({
+  initialChatId,
+  onNewChatCreated,
+}) => {
   const chatIdFromParams = useParams<{ chatId: string }>().chatId;
   const [currentChatId, setCurrentChatId] = useState<string | undefined>(
     initialChatId || chatIdFromParams
@@ -61,32 +65,29 @@ const ChatView: React.FC<ChatViewProps> = ({ initialChatId, onNewChatCreated }) 
   }, [currentTypingAnswer]);
 
   // Typewriter effect gõ từng chữ
-  const typeWriteAnswer = useCallback(
-    (fullText: string) => {
-      setBotTyping(true);
-      setCurrentTypingAnswer("");
-      let index = 0;
+  const typeWriteAnswer = useCallback((fullText: string) => {
+    setBotTyping(true);
+    setCurrentTypingAnswer("");
+    let index = 0;
 
-      const interval = setInterval(() => {
-        index++;
-        setCurrentTypingAnswer(fullText.slice(0, index));
+    const interval = setInterval(() => {
+      index++;
+      setCurrentTypingAnswer(fullText.slice(0, index));
 
-        if (index >= fullText.length) {
-          clearInterval(interval);
-          setBotTyping(false);
+      if (index >= fullText.length) {
+        clearInterval(interval);
+        setBotTyping(false);
 
-          setChatItems((prev) =>
-            prev.map((item) =>
-              item._id.startsWith("temp-") ? { ...item, answer: fullText } : item
-            )
-          );
+        setChatItems((prev) =>
+          prev.map((item) =>
+            item._id.startsWith("temp-") ? { ...item, answer: fullText } : item
+          )
+        );
 
-          scrollToBottomRef.current = true;
-        }
-      }, TYPEWRITER_INTERVAL);
-    },
-    []
-  );
+        scrollToBottomRef.current = true;
+      }
+    }, TYPEWRITER_INTERVAL);
+  }, []);
 
   // Fetch lịch sử chat nếu có currentChatId
   const fetchChatHistory = useCallback(
@@ -110,7 +111,10 @@ const ChatView: React.FC<ChatViewProps> = ({ initialChatId, onNewChatCreated }) 
           if (pageNumber === 1) {
             setChatItems(newItems);
             setTimeout(() => {
-              containerRef.current?.scrollTo(0, containerRef.current.scrollHeight);
+              containerRef.current?.scrollTo(
+                0,
+                containerRef.current.scrollHeight
+              );
             }, 50);
           } else {
             if (containerRef.current) {
@@ -123,7 +127,8 @@ const ChatView: React.FC<ChatViewProps> = ({ initialChatId, onNewChatCreated }) 
               setTimeout(() => {
                 if (!container) return;
                 const newScrollHeight = container.scrollHeight;
-                container.scrollTop = newScrollHeight - prevScrollHeight + prevScrollTop;
+                container.scrollTop =
+                  newScrollHeight - prevScrollHeight + prevScrollTop;
               }, 50);
             } else {
               setChatItems((prev) => [...newItems, ...prev]);
@@ -161,7 +166,8 @@ const ChatView: React.FC<ChatViewProps> = ({ initialChatId, onNewChatCreated }) 
       }
 
       const isAtBottom =
-        Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) < 5;
+        Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) <
+        5;
       setShowScrollDown(!isAtBottom);
     },
     [fetchChatHistory, hasMore, page]
@@ -248,10 +254,10 @@ const ChatView: React.FC<ChatViewProps> = ({ initialChatId, onNewChatCreated }) 
             prev.map((item) =>
               item._id.startsWith("temp-")
                 ? {
-                  ...item,
-                  answer:
-                    "Xin lỗi, hiện tại tôi không có câu trả lời cho câu hỏi này.",
-                }
+                    ...item,
+                    answer:
+                      "Xin lỗi, hiện tại tôi không có câu trả lời cho câu hỏi này.",
+                  }
                 : item
             )
           );
@@ -282,7 +288,7 @@ const ChatView: React.FC<ChatViewProps> = ({ initialChatId, onNewChatCreated }) 
   return (
     <div
       ref={containerRef}
-      className="max-w-4xl mx-auto p-4 flex flex-col h-screen relative"
+      className="w-[80%] mx-auto p-4 flex flex-col h-screen relative"
       style={{ height: "85vh", overflow: "hidden" }}
       onScroll={handleScroll}
     >
@@ -306,16 +312,13 @@ const ChatView: React.FC<ChatViewProps> = ({ initialChatId, onNewChatCreated }) 
               </div>
             )}
             {chatItems.map((item) => (
-              <div
-                key={item._id}
-                className="space-y-1 my-4 flex flex-col"
-              >
+              <div key={item._id} className="space-y-1 my-4 flex flex-col">
                 <div className="flex justify-end mb-3">
                   <div className="bg-main-blue text-white max-w-[70%] rounded-lg px-4 py-2 break-words whitespace-pre-line">
                     <ReactMarkdown>{item.question}</ReactMarkdown>
                   </div>
                 </div>
-                <div className="bg-gray-100 max-w-full rounded-lg px-4 py-2 whitespace-pre-line min-h-[40px]">
+                <div className="markdown-body bg-gray-100 max-w-full rounded-lg px-4 py-2 whitespace-pre-line min-h-[40px]">
                   <ReactMarkdown>
                     {item._id.startsWith("temp-") && botTyping
                       ? currentTypingAnswer || ""
@@ -327,7 +330,9 @@ const ChatView: React.FC<ChatViewProps> = ({ initialChatId, onNewChatCreated }) 
             {botTyping && chatItems.length === 0 && (
               <div className="flex justify-start py-2">
                 <Spin />
-                <div className="ml-2 text-gray-600">Chatbot đang trả lời...</div>
+                <div className="ml-2 text-gray-600">
+                  Chatbot đang trả lời...
+                </div>
               </div>
             )}
           </>

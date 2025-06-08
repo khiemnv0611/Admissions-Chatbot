@@ -15,7 +15,11 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const handleSubmit = async (values: { username: string; email: string; password: string }) => {
+  const handleSubmit = async (values: {
+    username: string;
+    email: string;
+    password: string;
+  }) => {
     const { username, email, password } = values;
     setLoading(true);
     try {
@@ -60,14 +64,21 @@ const RegisterPage = () => {
                   name="register"
                   layout="vertical"
                   onFinish={handleSubmit}
-                  onFinishFailed={() => toast.error("Vui lòng điền đầy đủ thông tin")}
+                  onFinishFailed={() =>
+                    toast.error("Vui lòng điền đầy đủ thông tin")
+                  }
                 >
                   <Title level={5} className="text-base sm:text-lg">
                     Tên đăng nhập <span className="text-red-500">*</span>
                   </Title>
                   <Form.Item
                     name="username"
-                    rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập!" }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập tên đăng nhập!",
+                      },
+                    ]}
                     className="mb-4 sm:mb-6"
                   >
                     <Input placeholder="Tên đăng nhập" size="large" />
@@ -96,7 +107,9 @@ const RegisterPage = () => {
                   </Title>
                   <Form.Item
                     name="password"
-                    rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+                    rules={[
+                      { required: true, message: "Vui lòng nhập mật khẩu!" },
+                    ]}
                     className="mb-6"
                   >
                     <Input.Password

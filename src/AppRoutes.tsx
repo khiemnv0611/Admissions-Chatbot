@@ -8,6 +8,7 @@ import FolderView from "./views/main/FolderView";
 import ChatView from "./views/main/ChatView";
 import { isAuthenticated } from "./utils/auth";
 import RegisterPage from "./pages/auth/RegisterPage";
+import PrivateRoute from "./layouts/PrivateRoute";
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -44,15 +45,13 @@ const AppRoutes = () => {
           }
         />
 
-        {/* Main Layout wrapper, only re-renders outlet */}
-        <Route element={<MainLayout />}>
-          {/* Nested routes to keep the layout intact */}
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/folder/:folderId" element={<FolderView />} />
-
-          {/* Chat mới không có Id */}
-          <Route path="/chat" element={<ChatView />} />
-          <Route path="/chat/:chatId" element={<ChatView />} />
+        <Route element={<PrivateRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/folder/:folderId" element={<FolderView />} />
+            <Route path="/chat" element={<ChatView />} />
+            <Route path="/chat/:chatId" element={<ChatView />} />
+          </Route>
         </Route>
       </Routes>
     </AnimatePresence>

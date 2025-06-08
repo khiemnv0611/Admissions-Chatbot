@@ -5,6 +5,7 @@ interface FolderListProps {
   openFolderIds: string[];
   toggleFolder: (id: string) => void;
   icon?: React.ReactNode;
+  reload?: () => void;
 }
 
 const FolderList = ({
@@ -12,6 +13,7 @@ const FolderList = ({
   openFolderIds,
   toggleFolder,
   icon,
+  reload,
 }: FolderListProps) => {
   return (
     <div className="flex flex-col gap-2">
@@ -22,6 +24,7 @@ const FolderList = ({
           icon={icon}
           isOpen={openFolderIds.includes(folder.id)}
           onToggle={() => toggleFolder(folder.id)}
+          reload={reload}
         />
       ))}
     </div>

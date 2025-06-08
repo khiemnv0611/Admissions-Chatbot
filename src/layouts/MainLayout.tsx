@@ -1,24 +1,12 @@
 import { Outlet } from "react-router-dom";
-import { SidebarProvider } from "@/contexts/SidebarContext";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import Footer from "@/components/footer";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const MainLayout = () => {
-  useEffect(() => {
-    console.log("MainLayout rendered");
-  });
-
-  useEffect(() => {
-    console.log("MainLayout mounted");
-    return () => {
-      console.log("MainLayout unmounted");
-    };
-  }, []);
-
   return (
-    <div className="page flex">
+    <div className="page flex min-h-screen">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Header />

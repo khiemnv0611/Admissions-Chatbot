@@ -10,6 +10,7 @@ interface FolderSelectorProps {
   folders: FolderData[];
   icon?: React.ReactNode;
   maxVisible?: number;
+  reload?: () => void;
 }
 
 const FolderSelector = ({
@@ -17,6 +18,7 @@ const FolderSelector = ({
   folders,
   icon,
   maxVisible = 5,
+  reload,
 }: FolderSelectorProps) => {
   const [openFolderIds, setOpenFolderIds] = useState<string[]>([]);
   const [visibleFolders, setVisibleFolders] = useState<FolderData[]>(
@@ -67,13 +69,19 @@ const FolderSelector = ({
     </div>
   );
 
+  useEffect(() => {
+    setVisibleFolders(folders.slice(0, maxVisible));
+    setHiddenFolders(folders.slice(maxVisible));
+  }, [folders, maxVisible]);
+
   return (
-    <FolderSection title={title}>
+    <FolderSection title={title} reload={reload}>
       <FolderList
         folders={visibleFolders}
         openFolderIds={openFolderIds}
         toggleFolder={toggleFolder}
         icon={icon}
+        reload={reload}
       />
 
       {hiddenFolders.length > 0 && (
