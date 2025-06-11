@@ -43,8 +43,11 @@ const ChatView: React.FC<ChatViewProps> = ({
   const loadingMoreRef = useRef(false);
   const scrollToBottomRef = useRef(false);
   const socketRef = useRef<Socket | null>(null);
+  const tempMessageIdRef = useRef<string | null>(null);
 
   const pageSize = 5;
+
+  const socketBaseUrl = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '');
 
   // Reset khi initialChatId hoặc chatIdFromParams thay đổi
   useEffect(() => {
@@ -68,24 +71,27 @@ const ChatView: React.FC<ChatViewProps> = ({
   const typeWriteAnswer = useCallback((fullText: string) => {
     setBotTyping(true);
     setCurrentTypingAnswer("");
-    let index = 0;
+    const tempId = tempMessageIdRef.current;
+    if (!tempId) return;
 
+    let index = 0;
     const interval = setInterval(() => {
       index++;
-      setCurrentTypingAnswer(fullText.slice(0, index));
+      const partial = fullText.slice(0, index);
+      setCurrentTypingAnswer(partial);
+
+      setChatItems((prev) =>
+        prev.map((item) =>
+          item._id === tempId ? { ...item, answer: partial } : item
+        )
+      );
 
       if (index >= fullText.length) {
         clearInterval(interval);
         setBotTyping(false);
-
-        setChatItems((prev) =>
-          prev.map((item) =>
-            item._id.startsWith("temp-") ? { ...item, answer: fullText } : item
-          )
-        );
-
-        scrollToBottomRef.current = true;
+        tempMessageIdRef.current = null;
       }
+
     }, TYPEWRITER_INTERVAL);
   }, []);
 
@@ -183,7 +189,7 @@ const ChatView: React.FC<ChatViewProps> = ({
       socketRef.current = null;
     }
 
-    const socket = io(import.meta.env.VITE_SOCKET_URL);
+    const socket = io(socketBaseUrl);
     socketRef.current = socket;
 
     const handleChatReceive = (data: {
@@ -193,10 +199,13 @@ const ChatView: React.FC<ChatViewProps> = ({
     }) => {
       if (data.chatId !== currentChatId) return;
 
+      const tempId = `temp-${Date.now()}`;
+      tempMessageIdRef.current = tempId;
+
       setChatItems((prev) => [
         ...prev,
         {
-          _id: `temp-${Date.now()}`,
+          _id: tempId,
           question: data.question,
           answer: "",
           createdAt: new Date().toISOString(),
@@ -220,10 +229,14 @@ const ChatView: React.FC<ChatViewProps> = ({
     async (question: string) => {
       if (!question.trim()) return;
 
+      const tempId = `temp-${Date.now()}`;
+      tempMessageIdRef.current = tempId;
+
+      setCurrentTypingAnswer("");
       setChatItems((prev) => [
         ...prev,
         {
-          _id: `temp-${Date.now()}`,
+          _id: tempId,
           question,
           answer: "",
           createdAt: new Date().toISOString(),
@@ -241,7 +254,6 @@ const ChatView: React.FC<ChatViewProps> = ({
 
         const data = res.data.Data;
 
-        // Nếu backend trả về chatId mới khác với currentChatId
         if (data.chatId && data.chatId !== currentChatId) {
           setCurrentChatId(data.chatId);
           onNewChatCreated?.(data.chatId);
@@ -252,12 +264,12 @@ const ChatView: React.FC<ChatViewProps> = ({
         } else {
           setChatItems((prev) =>
             prev.map((item) =>
-              item._id.startsWith("temp-")
+              item._id === tempId
                 ? {
-                    ...item,
-                    answer:
-                      "Xin lỗi, hiện tại tôi không có câu trả lời cho câu hỏi này.",
-                  }
+                  ...item,
+                  answer:
+                    "Xin lỗi, hiện tại tôi không có câu trả lời cho câu hỏi này.",
+                }
                 : item
             )
           );
@@ -267,8 +279,11 @@ const ChatView: React.FC<ChatViewProps> = ({
         console.error("Failed to send question:", error);
         setChatItems((prev) =>
           prev.map((item) =>
-            item._id.startsWith("temp-")
-              ? { ...item, answer: "Đã có lỗi xảy ra, vui lòng thử lại sau." }
+            item._id === tempId
+              ? {
+                ...item,
+                answer: "Đã có lỗi xảy ra, vui lòng thử lại sau.",
+              }
               : item
           )
         );
@@ -286,79 +301,79 @@ const ChatView: React.FC<ChatViewProps> = ({
     );
 
   return (
-    <div
-      ref={containerRef}
-      className="w-[80%] mx-auto p-4 flex flex-col h-screen relative"
-      style={{ height: "85vh", overflow: "hidden" }}
-      onScroll={handleScroll}
-    >
+    <div className="w-[80%] mx-auto p-4 flex flex-col h-[85vh] relative">
       <div
+        ref={containerRef}
         className="mb-4 space-y-6 overflow-y-auto flex-grow"
-        style={{ display: "flex", flexDirection: "column", minHeight: 0 }}
+        onScroll={handleScroll}
       >
-        {loadingInitial ? (
-          <div className="flex justify-center mt-10">
-            <Spin size="large" />
-          </div>
-        ) : chatItems.length === 0 ? (
-          <div className="text-center text-gray-500 mt-10">
-            Không có lịch sử hội thoại.
-          </div>
-        ) : (
-          <>
-            {loadingMore && (
-              <div className="flex justify-center py-2">
-                <Spin size="small" />
-              </div>
-            )}
-            {chatItems.map((item) => (
-              <div key={item._id} className="space-y-1 my-4 flex flex-col">
-                <div className="flex justify-end mb-3">
-                  <div className="bg-main-blue text-white max-w-[70%] rounded-lg px-4 py-2 break-words whitespace-pre-line">
-                    <ReactMarkdown>{item.question}</ReactMarkdown>
+        <div
+          className="mb-4 space-y-6 overflow-y-auto flex-grow"
+          style={{ display: "flex", flexDirection: "column", minHeight: 0 }}
+        >
+          {loadingInitial ? (
+            <div className="flex justify-center mt-10">
+              <Spin size="large" />
+            </div>
+          ) : chatItems.length === 0 ? (
+            <div className="text-center text-gray-500 mt-10">
+              Không có lịch sử hội thoại.
+            </div>
+          ) : (
+            <>
+              {loadingMore && (
+                <div className="flex justify-center py-2">
+                  <Spin size="small" />
+                </div>
+              )}
+              {chatItems.map((item) => (
+                <div key={item._id} className="space-y-1 my-4 flex flex-col">
+                  <div className="flex justify-end mb-3">
+                    <div className="bg-main-blue text-white max-w-[70%] rounded-lg px-4 py-2 break-words whitespace-pre-line">
+                      <ReactMarkdown>{item.question}</ReactMarkdown>
+                    </div>
+                  </div>
+                  <div className="markdown-body bg-gray-100 max-w-full rounded-lg px-4 py-2 whitespace-pre-line min-h-[40px]">
+                    <ReactMarkdown>
+                      {item._id === tempMessageIdRef.current && botTyping
+                        ? currentTypingAnswer
+                        : item.answer}
+                    </ReactMarkdown>
                   </div>
                 </div>
-                <div className="markdown-body bg-gray-100 max-w-full rounded-lg px-4 py-2 whitespace-pre-line min-h-[40px]">
-                  <ReactMarkdown>
-                    {item._id.startsWith("temp-") && botTyping
-                      ? currentTypingAnswer || ""
-                      : item.answer}
-                  </ReactMarkdown>
+              ))}
+              {botTyping && chatItems.length === 0 && (
+                <div className="flex justify-start py-2">
+                  <Spin />
+                  <div className="ml-2 text-gray-600">
+                    Chatbot đang trả lời...
+                  </div>
                 </div>
-              </div>
-            ))}
-            {botTyping && chatItems.length === 0 && (
-              <div className="flex justify-start py-2">
-                <Spin />
-                <div className="ml-2 text-gray-600">
-                  Chatbot đang trả lời...
-                </div>
-              </div>
-            )}
-          </>
+              )}
+            </>
+          )}
+        </div>
+
+        {showScrollDown && (
+          <Tooltip title="Chuyển đến tin nhắn mới nhất">
+            <div
+              onClick={() => {
+                if (containerRef.current) {
+                  containerRef.current.scrollTo({
+                    top: containerRef.current.scrollHeight,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+              className="fixed bottom-[80px] right-8 cursor-pointer z-50 bg-main-blue hover:bg-main-red text-white rounded-full shadow-lg select-none transition
+                       flex items-center justify-center"
+              style={{ width: 44, height: 44 }}
+            >
+              <DownOutlined style={{ fontSize: 24 }} />
+            </div>
+          </Tooltip>
         )}
       </div>
-
-      {showScrollDown && (
-        <Tooltip title="Chuyển đến tin nhắn mới nhất">
-          <div
-            onClick={() => {
-              if (containerRef.current) {
-                containerRef.current.scrollTo({
-                  top: containerRef.current.scrollHeight,
-                  behavior: "smooth",
-                });
-              }
-            }}
-            className="fixed bottom-[80px] right-8 cursor-pointer z-50 bg-main-blue hover:bg-main-red text-white rounded-full shadow-lg select-none transition
-                       flex items-center justify-center"
-            style={{ width: 44, height: 44 }}
-          >
-            <DownOutlined style={{ fontSize: 24 }} />
-          </div>
-        </Tooltip>
-      )}
-
       <ChatInputBox onSend={handleSend} chatId={currentChatId} />
     </div>
   );
