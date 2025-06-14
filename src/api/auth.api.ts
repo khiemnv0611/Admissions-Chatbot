@@ -3,21 +3,24 @@ import axiosClient from "./axiosClient";
 export const authApi = {
   login: async (
     email: string,
-    password: string
+    password: string,
+    visitorId?: string
   ): Promise<{ token: string }> => {
-    const res = await axiosClient.post("/auth/login", { email, password });
+    const res = await axiosClient.post("/auth/login", { email, password, visitorId });
     return res.data.Data;
   },
 
   register: async (
     username: string,
     email: string,
-    password: string
+    password: string,
+    visitorId?: string
   ): Promise<any> => {
     const res = await axiosClient.post("/auth/register", {
       username,
       email,
       password,
+      visitorId
     });
     return res.data;
   },

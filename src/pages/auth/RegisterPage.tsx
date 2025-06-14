@@ -7,6 +7,7 @@ import PaperPlane from "@/components/loading/PaperPlane";
 import { Form, Input, Button, Typography } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import toast from "react-hot-toast";
+import { getVisitorId } from "@/utils/auth";
 
 const { Title } = Typography;
 
@@ -23,7 +24,8 @@ const RegisterPage = () => {
     const { username, email, password } = values;
     setLoading(true);
     try {
-      const res = await authApi.register(username, email, password);
+      const visitorId = getVisitorId();
+      const res = await authApi.register(username, email, password, visitorId || "");
       if (res.Code === 1) {
         toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
         navigate("/auth");

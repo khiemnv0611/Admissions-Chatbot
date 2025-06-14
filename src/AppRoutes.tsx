@@ -35,24 +35,26 @@ const AppRoutes = () => {
         <Route
           path="/"
           element={
-            <Navigate to={isAuthenticated() ? "/home" : "/auth"} replace />
+            // <Navigate to={isAuthenticated() ? "/home" : "/auth"} replace />
+            <Navigate to="/home" replace />
           }
         />
         <Route
           path="*"
           element={
-            <Navigate to={isAuthenticated() ? "/home" : "/auth"} replace />
+            // <Navigate to={isAuthenticated() ? "/home" : "/auth"} replace />
+            <Navigate to="/home" replace />
           }
         />
 
-        <Route element={<PrivateRoute />}>
-          <Route element={<MainLayout />}>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/folder/:folderId" element={<FolderView />} />
-            <Route path="/chat" element={<ChatView />} />
-            <Route path="/chat/:chatId" element={<ChatView />} />
-          </Route>
+        <Route element={<MainLayout />}>
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/folder/:folderId" element={<FolderView />} />
+          <Route path="/chat" element={<ChatView />} />
+          <Route path="/chat/:chatId" element={<ChatView />} />
         </Route>
+        {/* <Route element={<PrivateRoute />}>
+        </Route> */}
       </Routes>
     </AnimatePresence>
   );

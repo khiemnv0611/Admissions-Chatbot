@@ -1,6 +1,15 @@
 import { jwtDecode } from "jwt-decode";
 
 const TOKEN_KEY = "token";
+const VISITOR = "visitorId";
+
+export const saveVisitorId = (visitorId: string) => {
+  localStorage.setItem(VISITOR, visitorId);
+}
+
+export const getVisitorId = (): string | null => {
+  return localStorage.getItem(VISITOR);
+}
 
 export const saveToken = (token: string) => {
   localStorage.setItem(TOKEN_KEY, token);

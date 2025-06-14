@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import ChatInputBox from "@/components/chat/ChatInputBox";
 import axiosClient from "@/api/axiosClient";
 import { io, Socket } from "socket.io-client";
+import { saveVisitorId, getVisitorId } from "@/utils/auth";
 import "./chat.css";
 
 const TYPEWRITER_INTERVAL = 20;
@@ -44,6 +45,7 @@ const ChatView: React.FC<ChatViewProps> = ({
   const scrollToBottomRef = useRef(false);
   const socketRef = useRef<Socket | null>(null);
   const tempMessageIdRef = useRef<string | null>(null);
+  const visitorId = getVisitorId();
 
   const pageSize = 5;
 
@@ -106,7 +108,7 @@ const ChatView: React.FC<ChatViewProps> = ({
         await new Promise((r) => setTimeout(r, 500));
 
         const res = await axiosClient.get(`/chatbot/history/${currentChatId}`, {
-          params: { page: pageNumber, size: pageSize },
+          params: { page: pageNumber, size: pageSize, visitorId: visitorId },
         });
 
         const data = res.data.Data?.Data;
@@ -250,9 +252,12 @@ const ChatView: React.FC<ChatViewProps> = ({
         const res = await axiosClient.post("/chatbot/chat", {
           question,
           chatId: currentChatId,
+          visitorId,
         });
 
         const data = res.data.Data;
+
+        if (data.visitorId) saveVisitorId(data.visitorId);
 
         if (data.chatId && data.chatId !== currentChatId) {
           setCurrentChatId(data.chatId);

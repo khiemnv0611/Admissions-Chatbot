@@ -18,11 +18,12 @@ import ChatSelector from "./chat/ChatSelector";
 import { folderApi } from "@/api/folder.api";
 import toast from "react-hot-toast";
 import { authApi } from "@/api";
-import { CgLogOut } from "react-icons/cg";
+import { CgLogOut, CgProfile } from "react-icons/cg";
 import { FaPencilAlt } from "react-icons/fa";
 import PopUpChangePassWord, {
   PopUpChangePasswordRef,
 } from "./PopUpChangePassWord";
+import { isAuthenticated } from "@/utils/auth";
 
 const { Title } = Typography;
 
@@ -39,9 +40,8 @@ const Sidebar = () => {
     ? isOpen
       ? "block static"
       : "hidden static"
-    : `fixed top-0 left-0 transform ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      }`;
+    : `fixed top-0 left-0 transform ${isOpen ? "translate-x-0" : "-translate-x-full"
+    }`;
 
   useEffect(() => {
     fetchFolders();
@@ -73,9 +73,8 @@ const Sidebar = () => {
       {!isLargeScreen && (
         <div
           onClick={toggle}
-          className={`fixed inset-0 bg-black/50 z-40 transition-opacity ${
-            isOpen ? "opacity-100 visible" : "opacity-0 invisible"
-          }`}
+          className={`fixed inset-0 bg-black/50 z-40 transition-opacity ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+            }`}
         />
       )}
 
@@ -138,21 +137,33 @@ const Sidebar = () => {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 px-4 py-2 bg-gray-50 border-t flex flex-col gap-2">
-          <div
-            className="button-hover mt-auto text-main-blue hover:font-semibold"
-            onClick={() => popupChangePasswordRef.current?.open()}
-          >
-            <FaPencilAlt size={18} />
-            <span className="text-sm">Đổi mật khẩu</span>
-          </div>
+          {isAuthenticated() ? (
+            <>
+              <div
+                className="button-hover mt-auto text-main-blue hover:font-semibold"
+                onClick={() => popupChangePasswordRef.current?.open()}
+              >
+                <FaPencilAlt size={18} />
+                <span className="text-sm">Đổi mật khẩu</span>
+              </div>
 
-          <div
-            className="button-hover mt-[-10px] text-main-red hover:font-semibold"
-            onClick={handleLogout}
-          >
-            <CgLogOut size={20} />
-            <span className="text-sm">Đăng xuất</span>
-          </div>
+              <div
+                className="button-hover mt-[-10px] text-main-red hover:font-semibold"
+                onClick={handleLogout}
+              >
+                <CgLogOut size={20} />
+                <span className="text-sm">Đăng xuất</span>
+              </div>
+            </>
+          ) : (
+            <div
+              className="button-hover text-main-blue hover:font-semibold"
+              onClick={() => navigate("/auth")}
+            >
+              <CgProfile size={20} />
+              <span className="text-sm">Đăng nhập</span>
+            </div>
+          )}
         </div>
       </aside>
 

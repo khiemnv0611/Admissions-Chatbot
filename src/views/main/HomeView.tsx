@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ChatInputBox from "@/components/chat/ChatInputBox";
 import axiosClient from "@/api/axiosClient";
 import Chatbot from "@/assets/images/chatbot.jpg";
+import { saveVisitorId, getVisitorId } from "@/utils/auth";
 
 const HomeView = () => {
   const [loading, setLoading] = useState(false);
@@ -12,8 +13,10 @@ const HomeView = () => {
     if (!question.trim()) return;
     setLoading(true);
     try {
-      const res = await axiosClient.post("/chatbot/chat", { question });
+      const visitorId = getVisitorId();
+      const res = await axiosClient.post("/chatbot/chat", { question, visitorId });
       const data = res.data.Data;
+      if (data?.visitorId) saveVisitorId(data.visitorId);
       if (data?.chatId) {
         // Chuyển sang trang chat với chatId mới được tạo
         navigate(`/chat/${data.chatId}`);

@@ -8,6 +8,7 @@ import PaperPlane from "@/components/loading/PaperPlane";
 import { Form, Input, Button, Typography } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import toast from "react-hot-toast";
+import { getVisitorId } from "@/utils/auth";
 
 const { Title } = Typography;
 
@@ -27,7 +28,8 @@ const AuthPage = () => {
     const { email, password } = values;
     setLoading(true);
     try {
-      const res = await authApi.login(email, password);
+      const visitorId = getVisitorId();
+      const res = await authApi.login(email, password, visitorId || "");
       saveToken(res.token);
       toast.success("Đăng nhập thành công!");
       navigate("/home");
