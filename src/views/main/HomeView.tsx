@@ -25,7 +25,7 @@ const HomeView = () => {
       }
     } catch (error) {
       console.error(error);
-      alert("Lỗi kết nối hoặc server");
+      alert(`${error}`);
     } finally {
       setLoading(false);
     }
